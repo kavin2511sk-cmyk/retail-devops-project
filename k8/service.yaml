@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: retail-app-svc
+  namespace: retail
+  labels:
+    app: retail-app
+    tier: backend
+  annotations:
+    # Expose Prometheus scraping on the service level as well
+    prometheus.io/scrape: "true"
+    prometheus.io/port:   "5000"
+spec:
+  type: ClusterIP          # Internal — traffic enters via Ingress
+  selector:
+    app: retail-app
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80             # Service port (what callers use)
+      targetPort: 5000     # Container port

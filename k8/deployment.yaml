@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: retail-app
+  namespace: retail
+  labels:
+    app: retail-app
+    tier: backend
+    version: "1.0.0"
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: retail-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1          # Allow 1 extra pod during rollout
+      maxUnavailable: 0    # Zero downtime — never kill old before new is ready
+  template:
+    metadata:
+      labels:
+        app: retail-app
+        tier: backend
+        version: "1.0.0"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port:   "5000"
+        prometheus.io/path:   "/metrics"
+    spec:
+      # ── Security Context (Pod-level) ──────────────────────────────────────
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+
+      # ── Graceful Termination ──────────────────────────────────────────────
+      terminationGracePeriodSeconds: 30
+
+      # ── Containers ────────────────────────────────────────────────────────
+      containers:
+        - name: retail-app
+          image: kavinprasads/retail-app:v1   # Replaced by CI/CD
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 5000
+              protocol: TCP
+
+          # ── Environment ─────────────────────────────────────────────────
+          env:
+            - name: APP_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: retail-app-config
+                  key: APP_ENV
+            - name: PORT
+              value: "5000"
+            - name: HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name   # Pod name exposed as HOSTNAME
+
+          # ── Resource Limits ──────────────────────────────────────────────
+          resources:
+            requests:
+              cpu:    "100m"
+              memory: "128Mi"
+            limits:
+              cpu:    "500m"
+              memory: "256Mi"
+
+          # ── Probes ───────────────────────────────────────────────────────
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+
+          # ── Security Context (Container-level) ───────────────────────────
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop: ["ALL"]
+
+      # ── Spread pods across nodes for HA ──────────────────────────────────
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: retail-app

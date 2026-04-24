@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: retail-app-ingress
+  namespace: retail
+  labels:
+    app: retail-app
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    # Rate limiting
+    nginx.ingress.kubernetes.io/limit-rps: "50"
+    # CORS
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    # TLS via cert-manager (Let's Encrypt)
+    #cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  rules:
+    - host: retail-app.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: retail-app-svc
+                port:
+                  number: 80
