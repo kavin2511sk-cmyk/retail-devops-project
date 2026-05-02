@@ -1,4 +1,7 @@
-name: CI — Build, Test & Push
+name: RetailApp CI — Build, Test & Push
+
+permission:
+  contents: write
 
 on:
   push:
@@ -131,8 +134,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GH_PAT }}   # PAT with repo write permission
 
       - name: Update deployment image tag
         run: |
