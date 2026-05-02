@@ -7,6 +7,7 @@ on:
       - "app/**"
       - "docker/**"
       - "k8/**"
+      - ".github/workflows/**"
   pull_request:
     branches: [main]
 
