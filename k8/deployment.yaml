@@ -42,7 +42,7 @@ spec:
       # ── Containers ────────────────────────────────────────────────────────
       containers:
         - name: retail-app
-          image: kavinprasads/retail-app:v1   # Replaced by CI/CD
+          image: kavinprasads/retail-app:sha-58ca1cb
           imagePullPolicy: Always
           ports:
             - name: http
