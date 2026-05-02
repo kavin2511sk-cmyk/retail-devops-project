@@ -80,7 +80,7 @@ def health():
 @app.route("/ready")
 def ready():
     """Kubernetes readiness probe endpoint."""
-    return jsonify({"status": "ready"}), 200
+    return jsonify({"status": "API-ready"}), 200
 
 
 # ─── Error Handlers ───────────────────────────────────────────────────────────
