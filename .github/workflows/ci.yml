@@ -1,4 +1,4 @@
-name: RetailApp CI — Build, Test & Push
+name: RetailApp-CI — Build, Test & Push
 
 on:
   push:
