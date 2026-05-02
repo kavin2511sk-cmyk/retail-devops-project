@@ -1,8 +1,5 @@
 name: RetailApp CI — Build, Test & Push
 
-permission:
-  contents: write
-
 on:
   push:
     branches: [main, develop]
@@ -12,6 +9,9 @@ on:
       - "k8/**"
   pull_request:
     branches: [main]
+
+permissions:
+  contents: write
 
 env:
   REGISTRY:   docker.io
