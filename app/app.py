@@ -27,7 +27,7 @@ metrics.info("retail_app_info", "Retail API metadata", version="1.0.0")
 PRODUCTS = [
     {"id": 1, "name": "Wireless Headphones", "category": "Electronics", "price": 79.99, "stock": 142},
     {"id": 2, "name": "Running Shoes", "category": "Footwear", "price": 119.99, "stock": 85},
-    {"id": 3, "name": "Coffee Maker", "category": "Appliances", "price": 49.99,  "stock": 63},
+    {"id": 3, "name": "Coffee Maker", "category": "Appliances", "price": 49.99, "stock": 63},
     {"id": 4, "name": "Yoga Mat", "category": "Sports", "price": 29.99, "stock": 210},
     {"id": 5, "name": "Backpack", "category": "Bags", "price": 59.99, "stock": 97},
     {"id": 6, "name": "Sunglasses", "category": "Accessories", "price": 39.99, "stock": 180},
@@ -39,6 +39,7 @@ PRODUCTS = [
 START_TIME = time.time()
 
 # ─── Routes ───────────────────────────────────────────────────────────────────
+
 
 @app.route("/")
 def home():
